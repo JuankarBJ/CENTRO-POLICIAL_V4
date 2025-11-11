@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Plantillas Policiales - C.P.L. Daimiel</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+        }
+        
+        /* Cabecera Profesional Mejorada */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+            color: white;
+            padding: 2.5rem 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 3px solid #60a5fa;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .header h1 { 
+            font-weight: 700; 
+            font-size: 2.4rem; 
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            letter-spacing: -0.01em;
+        }
+        .header .lead { 
+            font-size: 1.2rem; 
+            color: rgba(255, 255, 255, 0.9); 
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        .help-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .help-button:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Sistema de Filtros Limpio y Compacto */
+        .search-filters-row {
+            background: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .search-container {
+            background: white;
+            border-radius: 12px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .search-container .input-group {
+            margin: 0;
+        }
+        .filters-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        .category-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .category-dropdown-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            min-width: 180px;
+            text-align: left;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .category-dropdown-btn:hover {
+            border-color: #0d6efd;
+            background: #f8f9ff;
+            box-shadow: 0 4px 8px rgba(13,110,253,0.15);
+        }
+        .category-dropdown-btn.active {
+            border-color: #0d6efd;
+            background: #0d6efd;
+            color: white;
+            box-shadow: 0 4px 8px rgba(13,110,253,0.3);
+        }
+        .category-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 180px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 0.25rem;
+        }
+        .category-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .category-item:hover {
+            background: #f8f9ff;
+        }
+        .category-item:last-child {
+            border-bottom: none;
+        }
+        .category-item.active {
+            background: #0d6efd;
+            color: white;
+        }
+        .category-count {
+            background: rgba(0,0,0,0.08);
+            color: inherit;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .category-item.active .category-count {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Color coding for categories with subtle indicators */
+        .category-item[data-category="Actas"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #d97706, #f59e0b);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .category-item[data-category="Atestados"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .category-item[data-category="Utilidad"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .category-item[data-category="Diligencias"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #16a34a, #22c55e);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .category-item[data-category="Herramientas"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        /* ===== 10 NUEVOS TIPOS DE CATEGORÍAS ===== */
+        
+        /* 6. Investigaciones - Púrpura Elegante */
+        .category-item[data-category="Investigaciones"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #7c3aed, #a855f7);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 7. Comunicados - Rosa Sutil */
+        .category-item[data-category="Comunicados"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #ec4899, #f472b6);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 8. Patrullaje - Teal Profesional */
+        .category-item[data-category="Patrullaje"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #0d9488, #14b8a6);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 9. Sanciones - Índigo Autoritario */
+        .category-item[data-category="Sanciones"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #4f46e5, #6366f1);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 10. Emergencias - Esmeralda Urgente */
+        .category-item[data-category="Emergencias"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #059669, #10b981);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 11. Operativos - Cítrico Dinámico */
+        .category-item[data-category="Operativos"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #65a30d, #84cc16);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 12. Seguridad - Coral Protectivo */
+        .category-item[data-category="Seguridad"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #ea580c, #f97316);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 13. Administración - Plateado Corporativo */
+        .category-item[data-category="Administración"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #64748b, #94a3b8);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 14. Formación - Dorado Educativo */
+        .category-item[data-category="Formación"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #d97706, #f59e0b);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* 15. Protocolos - Azul Real Institucional */
+        .category-item[data-category="Protocolos"] .category-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, #1d4ed8, #3b82f6);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        /* Tarjetas Mejoradas con Degradados y Sombras Elegantes */
+        .card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid rgba(0,0,0,0.08);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 120px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        /* Degradados sutiles por categoría */
+        .card[data-category="Utilidad"] { 
+            background: linear-gradient(135deg, #f4f6ff 0%, #e8f0ff 100%);
+            border-left: 4px solid #4f6fde;
+            box-shadow: 0 2px 8px rgba(79, 111, 222, 0.15);
+        }
+        .card[data-category="Diligencias"] { 
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 4px solid #16a34a;
+            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.15);
+        }
+        .card[data-category="Actas"] { 
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+            border-left: 4px solid #d97706;
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+        }
+        .card[data-category="Herramientas"] { 
+            background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%);
+            border-left: 4px solid #f59e0b;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+        }
+        .card[data-category="Atestados"] { 
+            background: linear-gradient(135deg, #ffebeb 0%, #fecaca 100%);
+            border-left: 4px solid #f50b0b;
+            box-shadow: 0 2px 8px rgba(245, 11, 11, 0.15);
+        }
+        
+        /* ===== 10 NUEVAS CATEGORÍAS - DEGRADADOS ===== */
+        
+        /* 6. Investigaciones - Degradado Púrpura Elegante */
+        .card[data-category="Investigaciones"] { 
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border-left: 4px solid #7c3aed;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+        }
+
+        /* 7. Comunicados - Degradado Rosa Sutil */
+        .card[data-category="Comunicados"] { 
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            border-left: 4px solid #ec4899;
+            box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
+        }
+
+        /* 8. Patrullaje - Degradado Teal Profesional */
+        .card[data-category="Patrullaje"] { 
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            border-left: 4px solid #0d9488;
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
+        }
+
+        /* 9. Sanciones - Degradado Índigo Autoritario */
+        .card[data-category="Sanciones"] { 
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border-left: 4px solid #4f46e5;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+        }
+
+        /* 10. Emergencias - Degradado Esmeralda Urgente */
+        .card[data-category="Emergencias"] { 
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-left: 4px solid #059669;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+        }
+
+        /* 11. Operativos - Degradado Cítrico Dinámico */
+        .card[data-category="Operativos"] { 
+            background: linear-gradient(135deg, #f7fee7 0%, #e5fbd2 100%);
+            border-left: 4px solid #65a30d;
+            box-shadow: 0 2px 8px rgba(101, 163, 13, 0.15);
+        }
+
+        /* 12. Seguridad - Degradado Coral Protectivo */
+        .card[data-category="Seguridad"] { 
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+            border-left: 4px solid #ea580c;
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15);
+        }
+
+        /* 13. Administración - Degradado Plateado Corporativo */
+        .card[data-category="Administración"] { 
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-left: 4px solid #64748b;
+            box-shadow: 0 2px 8px rgba(100, 116, 139, 0.15);
+        }
+
+        /* 14. Formación - Degradado Dorado Educativo */
+        .card[data-category="Formación"] { 
+            background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%);
+            border-left: 4px solid #d97706;
+            box-shadow: 0 2px 8px rgba(217, 119, 6, 0.15);
+        }
+
+        /* 15. Protocolos - Degradado Azul Real Institucional */
+        .card[data-category="Protocolos"] { 
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #1d4ed8;
+            box-shadow: 0 2px 8px rgba(29, 78, 216, 0.15);
+        }
+        
+        .card:hover { 
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        /* ===== EFECTOS HOVER PARA NUEVAS CATEGORÍAS ===== */
+        
+        /* 6. Investigaciones - Hover Púrpura */
+        .card[data-category="Investigaciones"]:hover { 
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.25);
+        }
+
+        /* 7. Comunicados - Hover Rosa */
+        .card[data-category="Comunicados"]:hover { 
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.25);
+        }
+
+        /* 8. Patrullaje - Hover Teal */
+        .card[data-category="Patrullaje"]:hover { 
+            background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.25);
+        }
+
+        /* 9. Sanciones - Hover Índigo */
+        .card[data-category="Sanciones"]:hover { 
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.25);
+        }
+
+        /* 10. Emergencias - Hover Esmeralda */
+        .card[data-category="Emergencias"]:hover { 
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.25);
+        }
+
+        /* 11. Operativos - Hover Cítrico */
+        .card[data-category="Operativos"]:hover { 
+            background: linear-gradient(135deg, #e5fbd2 0%, #d9f99d 100%);
+            box-shadow: 0 8px 25px rgba(101, 163, 13, 0.25);
+        }
+
+        /* 12. Seguridad - Hover Coral */
+        .card[data-category="Seguridad"]:hover { 
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            box-shadow: 0 8px 25px rgba(234, 88, 12, 0.25);
+        }
+
+        /* 13. Administración - Hover Plateado */
+        .card[data-category="Administración"]:hover { 
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            box-shadow: 0 8px 25px rgba(100, 116, 139, 0.25);
+        }
+
+        /* 14. Formación - Hover Dorado */
+        .card[data-category="Formación"]:hover { 
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            box-shadow: 0 8px 25px rgba(217, 119, 6, 0.25);
+        }
+
+        /* 15. Protocolos - Hover Azul Real */
+        .card[data-category="Protocolos"]:hover { 
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.25);
+        }
+        
+        /* Efecto de hover para cards con degradados mejorados */
+        .card[data-category="Utilidad"]:hover { 
+            background: linear-gradient(135deg, #e8f0ff 0%, #dbeafe 100%);
+            box-shadow: 0 8px 25px rgba(79, 111, 222, 0.25);
+        }
+        .card[data-category="Diligencias"]:hover { 
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            box-shadow: 0 8px 25px rgba(22, 163, 74, 0.25);
+        }
+        .card[data-category="Actas"]:hover { 
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            box-shadow: 0 8px 25px rgba(217, 119, 6, 0.25);
+        }
+        .card[data-category="Herramientas"]:hover { 
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.25);
+        }
+        .card[data-category="Atestados"]:hover { 
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            box-shadow: 0 8px 25px rgba(245, 11, 11, 0.25);
+        }
+        
+        /* Expansión natural sin min-height fijo */
+        .card.expanded {
+            height: auto;
+            z-index: 10;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+        
+        .card-body { 
+            padding: 0.75rem;
+            position: relative;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1.2;
+            margin-bottom: 0.25rem;
+            color: #1e293b;
+        }
+        
+        .card-subtitle {
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        
+        /* Información básica siempre visible */
+        .basic-info {
+            display: block;
+        }
+        
+        /* Información expandible con transición suave */
+        .expandable-info {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        
+        .card.expanded .expandable-info {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 0.5rem;
+        }
+        
+        .card-text {
+            font-size: 0.8rem;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        /* Botones de acción */
+        .actions-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-add-compact {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+        
+        .btn-toolbar-compact .btn {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Indicador de expansión */
+        .expand-indicator {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.7rem;
+            color: #6b7280;
+            transition: transform 0.3s ease;
+        }
+        
+        .card.expanded .expand-indicator {
+            transform: rotate(180deg);
+        }
+        
+        /* ============================================ */
+        /* ========== MODALES MEJORADOS ============== */
+        /* ============================================ */
+        
+        /* Botón Flotante con Animaciones */
+        .fab { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            z-index: 1000; 
+            box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .fab:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
+        }
+        
+        .fab .badge { 
+            position: absolute; 
+            top: -5px; 
+            right: -10px;
+            animation: pulse-badge 2s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse-badge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Animación de éxito al añadir al carrito */
+        .add-to-cart-animation {
+            position: absolute;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 9999;
+            animation: flyToCart 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes flyToCart {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(var(--x), var(--y)) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(0.5);
+            }
+        }
+        
+        /* Modal de Ayuda - Estilos Mejorados */
+        .help-modal .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .help-modal .modal-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .help-modal .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .help-modal .modal-body {
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        
+        .help-content {
+            font-size: 0.95rem;
+        }
+        .help-content h6 {
+            color: #0d6efd;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .help-content h6:first-child {
+            margin-top: 0;
+        }
+        .help-content ul {
+            padding-left: 1.2rem;
+        }
+        .help-content li {
+            margin-bottom: 0.5rem;
+        }
+        .help-content strong {
+            color: #1e293b;
+        }
+        
+        /* ========== MODAL DEL CARRITO MEJORADO ========== */
+        .cart-modal .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            animation: cartModalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .cart-modal .modal-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+            color: white;
+            border: none;
+            position: relative;
+            padding: 1.5rem;
+        }
+        
+        .cart-modal .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #60a5fa, #3b82f6, #1d4ed8);
+        }
+        
+        .cart-modal .modal-body {
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .cart-modal .modal-footer {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.5rem 2rem;
+        }
+        
+        /* Lista del carrito mejorada */
+        .cart-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: cartItemSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+        }
+        
+        .cart-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+        }
+        
+        @keyframes cartItemSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            cursor: move;
+        }
+        
+        .cart-handle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-right: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cart-handle:hover {
+            color: #3b82f6;
+            transform: scale(1.1);
+        }
+        
+        .cart-item-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+        
+        /* Controles de cantidad mejorados */
+        .cart-quantity-controls {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 0.25rem;
+            margin: 0 1rem;
+        }
+        
+        .cart-quantity-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .cart-quantity-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+        
+        .cart-quantity-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .cart-quantity-display {
+            padding: 0 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .cart-remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .cart-remove-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        /* Mensaje de carrito vacío */
+        .empty-cart-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+        
+        .empty-cart-icon {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            animation: emptyIconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes emptyIconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Vista de descarga mejorada */
+        .download-view {
+            animation: downloadViewSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .download-alert {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #10b981;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .download-alert i {
+            color: #059669;
+            margin-right: 0.5rem;
+        }
+        
+        .download-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .download-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .download-item-number {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            margin-right: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .download-all-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-all-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .download-all-btn:hover::before {
+            left: 100%;
+        }
+        
+        .download-all-btn:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        @keyframes downloadViewSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ========== MODAL DE DATOS MEJORADO ========== */
+        .data-entry-modal .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .data-entry-modal .modal-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            color: white;
+            border: none;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            padding: 1.5rem;
+        }
+        
+        .data-entry-modal .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706);
+        }
+        
+        .data-entry-modal .modal-body {
+            padding: 2rem;
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+        }
+        
+        .data-entry-modal .modal-footer {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.5rem 2rem;
+        }
+        
+        .data-entry-form .form-group {
+            margin-bottom: 1.5rem;
+            animation: formFieldSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .data-entry-form .form-group:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+        
+        .data-entry-form .form-group:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+        
+        @keyframes formFieldSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .data-entry-form .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .data-entry-form .form-label::before {
+            content: '✏️';
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .data-entry-form .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .data-entry-form .form-control:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.1);
+            background: #fffdf7;
+        }
+        
+        .data-entry-form .form-control:hover {
+            border-color: #d1d5db;
+        }
+        
+        .data-entry-form textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .generate-data-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .generate-data-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .generate-data-btn:hover::before {
+            left: 100%;
+        }
+        
+        .generate-data-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Animaciones generales para modales */
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes cartModalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Estados de drag y drop */
+        .sortable-ghost {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            opacity: 0.7;
+            border: 2px dashed #3b82f6;
+        }
+        
+        .sortable-drag {
+            transform: rotate(5deg);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Efectos de loading */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Estilos específicos para el modal de vista previa */
+        #previewModal .modal-dialog {
+            max-width: 95vw;
+            height: 90vh;
+            margin: 0 auto;
+        }
+        
+        #previewModal .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #previewModal .modal-header {
+            flex-shrink: 0;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border-bottom: none;
+        }
+        
+        #previewModal .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        #previewModal .btn-close {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            opacity: 0.8;
+        }
+        
+        #previewModal .btn-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            opacity: 1;
+        }
+        
+        #previewModal .modal-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+        
+        #previewModal embed {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .category-dropdown-btn {
+                min-width: 150px;
+                font-size: 0.9rem;
+            }
+            .category-dropdown-menu {
+                min-width: 150px;
+            }
+            .card-title {
+                font-size: 0.85rem;
+            }
+            .card-text {
+                font-size: 0.75rem;
+            }
+            .help-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+            
+            /* Responsive para modales */
+            .cart-modal .modal-body,
+            .data-entry-modal .modal-body {
+                padding: 1rem;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cart-item-info {
+                margin-bottom: 1rem;
+            }
+            
+            .cart-quantity-controls {
+                justify-content: center;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="container">
+            <h1>Cuerpo de Policía Local de Daimiel - 212</h1>
+            <p class="lead">Gestor de Atestados y Diligencias</p>
+        </div>
+        <button class="help-button" type="button" data-bs-toggle="modal" data-bs-target="#helpModal" title="Ayuda y Funcionalidades">
+            <i class="bi bi-question-circle"></i>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="row mb-4 search-filters-row">
+            <div class="col-md-8">
+                <div class="search-container">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="search" id="searchInput" class="form-control border-0 bg-transparent" placeholder="Buscar por título, descripción, etiqueta...">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end filters mt-3 mt-md-0">
+                <div class="filters-container" id="categoryFilters"></div>
+            </div>
+        </div>
+
+        <div class="row g-3" id="template-container"></div>
+        <div id="no-results" class="text-center p-5" style="display: none;"><h3>No se encontraron resultados</h3></div>
+    </div>
+
+    <button class="btn btn-primary btn-lg rounded-pill fab" type="button" data-bs-toggle="modal" data-bs-target="#composerModal">
+        <i class="bi bi-journal-check"></i> Mi Atestado
+        <span id="composer-count" class="badge rounded-pill bg-danger">0</span>
+    </button>
+
+    <!-- Modal de Ayuda Mejorado -->
+    <div class="modal fade help-modal" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">
+                        <i class="bi bi-question-circle-fill me-2"></i>
+                        Ayuda y Funcionalidades
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-content">
+                        <h6>🗂️ <strong>Navegación y Visualización</strong></h6>
+                        <ul>
+                            <li><strong>4 cards por fila:</strong> Diseño optimizado para mostrar más contenido de forma eficiente</li>
+                            <li><strong>Cards comprimidas:</strong> Visualiza solo la información esencial (título y categoría) por defecto</li>
+                            <li><strong>Expansión con clic:</strong> Haz clic en cualquier card para ver descripción completa, etiquetas y botones de acción</li>
+                            <li><strong>Una sola expansión:</strong> Solo una card puede estar expandida a la vez para mantener la limpieza visual</li>
+                        </ul>
+
+                        <h6>🔍 <strong>Sistema de Filtros</strong></h6>
+                        <ul>
+                            <li><strong>Búsqueda en tiempo real:</strong> Escribe en el campo de búsqueda para filtrar por título, descripción o etiquetas</li>
+                            <li><strong>Filtro por categoría:</strong> Usa el dropdown para filtrar por tipo de documento (Actas, Atestados, Diligencias, etc.)</li>
+                            <li><strong>Contadores dinámicos:</strong> Cada categoría muestra el número de plantillas disponibles</li>
+                            <li><strong>Combinación de filtros:</strong> Puedes usar búsqueda y filtro de categoría simultáneamente</li>
+                        </ul>
+
+                        <h6>📋 <strong>Gestión de Atestados (Mi Atestado)</strong></h6>
+                        <ul>
+                            <li><strong>Añadir al atestado:</strong> Usa el botón "Añadir al Atestado" en cada plantilla</li>
+                            <li><strong>Ajuste de cantidad:</strong> Incrementa o decrementa la cantidad de cada plantilla en tu lista</li>
+                            <li><strong>Reordenamiento:</strong> Arrastra las plantillas para establecer el orden que prefieras</li>
+                            <li><strong>Generación automática:</strong> El sistema numera y renombra los archivos automáticamente</li>
+                            <li><strong>Descarga masiva:</strong> Descarga todas las plantillas de una vez o individual</li>
+                        </ul>
+
+                        <h6>🛠️ <strong>Herramientas Adicionales</strong></h6>
+                        <ul>
+                            <li><strong>Vista previa:</strong> Botón de "ojo" para previsualizar las plantillas en PDF</li>
+                            <li><strong>Introducir datos:</strong> Para plantillas con campos, rellena un formulario y genera un archivo CSV con tus datos</li>
+                            <li><strong>Descarga directa:</strong> Descarga cualquier plantilla individualmente sin añadirla al atestado</li>
+                        </ul>
+
+                        <h6>📊 <strong>Categorías de Plantillas</strong></h6>
+                        <ul>
+                            <li><strong>Actas:</strong> Documentos oficiales y informes (color amarillo)</li>
+                            <li><strong>Atestados:</strong> Procedimientos penales completos (color rojo)</li>
+                            <li><strong>Diligencias:</strong> Trámites y procedimientos administrativos (color verde)</li>
+                            <li><strong>Utilidad:</strong> Formularios y documentos de apoyo (color azul)</li>
+                            <li><strong>Herramientas:</strong> Macros y programas de apoyo (color naranja)</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-3">
+                            <strong>💡 Consejo:</strong> Para trabajar eficientemente, primero define tu estrategia (qué atestados necesitas), luego usa el filtro por categoría para encontrar rápidamente las plantillas que necesitas, y finalmente compón tu atestado con el sistema de "Mi Atestado".
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        <i class="bi bi-check2"></i> Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito Mejorado -->
+    <div class="modal fade cart-modal" id="composerModal" tabindex="-1" aria-labelledby="composerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="composerModalLabel">
+                        <i class="bi bi-cart-check me-2"></i>
+                        Compón tu Atestado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="composition-view">
+                        <div class="alert alert-light border-0 mb-3">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Añade diligencias, ajusta la cantidad y <strong>arrástralas para ordenarlas</strong>.
+                        </div>
+                        <div id="cart-items-container">
+                            <ul class="list-group" id="composition-list"></ul>
+                        </div>
+                        <div id="empty-list-message" class="empty-cart-message" style="display: none;">
+                            <div class="empty-cart-icon">
+                                <i class="bi bi-cart-x"></i>
+                            </div>
+                            <h5>Tu lista está vacía</h5>
+                            <p class="text-muted">Añade algunas plantillas para comenzar a componer tu atestado</p>
+                        </div>
+                    </div>
+                    <div id="download-view" class="download-view" style="display: none;">
+                        <div class="download-alert">
+                            <i class="bi bi-check-circle"></i>
+                            <strong>¡Atestado listo para descargar!</strong><br>
+                            Los archivos se han numerado y renombrado automáticamente.
+                        </div>
+                        <div class="d-grid mb-3">
+                            <button class="btn download-all-btn" id="download-all-btn">
+                                <i class="bi bi-cloud-download-fill me-2"></i> Descargar Todo
+                            </button>
+                        </div>
+                        <ul class="list-group" id="download-list"></ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary me-auto" id="clear-list-btn">
+                        <i class="bi bi-trash"></i> Vaciar Lista
+                    </button>
+                    <button type="button" class="btn btn-primary" id="generate-btn">
+                        <i class="bi bi-check2-circle"></i> Generar Atestado
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="start-over-btn" style="display: none;">
+                        <i class="bi bi-arrow-left"></i> Volver a Componer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Introducción de Datos Mejorado -->
+    <div class="modal fade data-entry-modal" id="dataEntryModal" tabindex="-1" aria-labelledby="dataEntryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dataEntryModalLabel">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Datos para...
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning border-0 mb-4">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Rellena los campos</strong> para generar el archivo CSV de esta plantilla.
+                    </div>
+                    <form id="data-entry-form" class="row g-3">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn generate-data-btn" id="generate-data-btn">
+                        <i class="bi bi-download me-2"></i> Generar CSV y Descargar Plantilla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Vista Previa -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="previewModalLabel">Vista Previa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0" id="previewModalBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ######################################################################
+// ### 1. CONFIGURACIÓN DE PLANTILLAS INDIVIDUALES ###
+// ######################################################################
+const templates = [
+//     {
+//       id: 1,
+//       title: "Programa Excel",
+//       description: "Descarga este archivo. Su macro rellenará las plantillas descargadas con los datos introducidos.",
+//       category: "Herramientas",
+//       tags: ["macro", "excel", "importar"],
+//       path: ".plantillas/macros/MaestroImportador.xlsm"
+//   },
+
+    // ######################################################################
+    // ### id: 100-199 - ACTAS
+    // ######################################################################
+    {
+        id: 100, 
+        title: "Informe Interno",
+        description: "Plantilla de informe tipo para comunicar un asunto al Subinspector-Jefe.",
+        category: "Actas", 
+        tags: ["informe", "jefatura", "novedades"],
+        path: ".plantillas/actas/P - Acta Informe.docx",
+        formFields: [
+            { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
+            { id: "asunto", label: "Asunto", type: "text", required: true },
+            { id: "fecha_informe", label: "Fecha del Informe", type: "date", required: true },
+            { id: "num_agente", label: "Nº de Agente (Fdo.)", type: "text", required: true },
+            { id: "texto_informe", label: "Cuerpo del Informe", type: "textarea", required: true }
+        ],
+        previewPdf: ".plantillas/actas/P - Acta Informe.pdf"
+    },
+   
+    {
+        id: 101,
+        title: "Acta de daños a objetos de propiedad municipal",
+        description: "Acta para cumplimentar en casos de daño a objetos de propiedad municipal.",
+        category: "Actas",
+        tags: ["daños", "propiedad municipal","actas"],
+        path: ".plantillas/actas/P - Acta daños a objetos de propiedad municipal.docx",
+       
+        previewPdf: ".plantillas/actas/P - Acta daños a objetos de propiedad municipal.pdf"
+    },
+    {
+        id: 102,
+        title: "Acta de intervención permiso de conducir",
+        description: "Acta para la retirada de un permiso de conducir caducado.",
+        category: "Actas",
+        tags: ["permiso de conducir", "caducado","retirada","intervención"],
+        path: ".plantillas/actas/P - Acta intervención permiso de conducir.docx",
+         formFields: [
+            { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
+            { id: "nombre", label: "Nombre completo", type: "text", required: true },
+            { id: "DNI", label: "DNI/NIE/Otro", type: "date", required: true },
+            { id: "fecha_nac", label: "Fecha de nacimiento", type: "text", required: true },
+            { id: "lugar_nac", label: "Lugar de nacimiento", type: "text", required: true },
+            { id: "domicilio", label: "Domicilio", type: "text", required: true },
+            { id: "localidad", label: "Localidad(Provincia)", type: "text", required: true },
+            { id: "telefono", label: "Teléfono", type: "text", required: true },
+        ],
+        previewPdf: ".plantillas/actas/P - Acta intervención permiso de conducir.pdf"
+    },
+    {
+        id: 500,
+        title: "ATESTADO - Conducir sin permiso de conducir (384 CP)",
+        description: "Atestado completo para delito de conducción sin haber obtenido nunca el permiso de conducir, tenerlo retirado por pérdida de puntos o resolución judicial.",
+        category: "Atestados",
+        tags: ["atestado completo", "permiso","delito"],
+        path: ".plantillas/atestados/P - ATESTADO SIN PERMISO.docx",
+        // --- ¡PROPIEDAD MODIFICADA! ---
+        previewPdf: ".plantillas/atestados/P - ATESTADO SIN PERMISO.pdf"
+    },
+    {
+        id: 501,
+        title: "ATESTADO - Alcoholemia penal todos los supuestos.",
+        description: "Atestado completo para delito de conducir bajo la influencia de bebidas alcohólicas o con tasa superior a 0,6mg/L en aire expirado, así como en caso de negativa a someterse a las pruebas.",
+        category: "Atestados",
+        tags: ["atestado completo", "alcohol","negativa"],
+        path: ".plantillas/atestados/P - CIBA ALCOHOLEMIA TODOS LOS CASOS.docx",
+        // --- ¡PROPIEDAD MODIFICADA! ---
+        previewPdf: ".plantillas/atestados/P - CIBA ALCOHOLEMIA TODOS LOS CASOS.pdf"
+    },
+    {
+        id: 600,
+        title: "Solicitud de traslado de arma",
+        description: "Plantilla estándar para la petición del traslado del arma.",
+        category: "Utilidad",
+        tags: ["arma", "traslado","solicitud"],
+        path: ".plantillas/utilidad/P - Traslado Arma.docx",
+        // --- ¡PROPIEDAD MODIFICADA! ---
+        previewPdf: ".plantillas/utilidad/P - Traslado Arma.pdf"
+    }, 
+    {
+        id: 601,
+        title: "Hoja de transeúntes",
+        description: "Plantilla estándar para el seguimiento de transeúntes.",
+        category: "Utilidad",
+        tags: ["albergue", "transeuntes"],
+        path: ".plantillas/utilidad/P - Hoja Transeúntes.docx",
+        // --- ¡PROPIEDAD MODIFICADA! ---
+        previewPdf: ".plantillas/utilidad/P - Hoja Transeúntes.pdf"
+    } 
+    
+    
+];
+
+// ######################################################################
+// ### 2. CONFIGURACIÓN DE PAQUETES (Vacío por ahora) ###
+// ######################################################################
+const bundles = [];
+const allItems = [...templates, ...bundles];
+
+
+// ######################################################################
+// ### 3. LÓGICA DE LA APLICACIÓN ###
+// ######################################################################
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- Variables Globales ---
+    const container = document.getElementById('template-container');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFiltersContainer = document.getElementById('categoryFilters');
+    const noResults = document.getElementById('no-results');
+    
+    // Cesta de "Mi Atestado"
+    let compositionList = [];
+    const composerCount = document.getElementById('composer-count');
+    const compositionListEl = document.getElementById('composition-list');
+    const downloadListEl = document.getElementById('download-list');
+    const emptyListMessage = document.getElementById('empty-list-message');
+    const generateBtn = document.getElementById('generate-btn');
+    const clearBtn = document.getElementById('clear-list-btn');
+    const startOverBtn = document.getElementById('start-over-btn');
+    const downloadAllBtn = document.getElementById('download-all-btn');
+    const compositionView = document.getElementById('composition-view');
+    const downloadView = document.getElementById('download-view');
+
+    // Modal de Datos de Plantilla
+    const dataEntryModalEl = document.getElementById('dataEntryModal');
+    const dataEntryModalTitle = document.getElementById('dataEntryModalLabel');
+    const dataEntryForm = document.getElementById('data-entry-form');
+    const generateDataBtn = document.getElementById('generate-data-btn');
+
+    // (NUEVO) Variables del Modal de Vista Previa
+    const previewModalEl = document.getElementById('previewModal');
+    const previewModalBody = document.getElementById('previewModalBody');
+    const previewModalLabel = document.getElementById('previewModalLabel');
+
+    // --- Funciones de Utilidad ---
+    function downloadCSV(csvContent, filename) {
+        const bom = '\uFEFF'; 
+        const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    function downloadFile(path, newFilename) {
+        const link = document.createElement("a");
+        link.setAttribute("href", path);
+        link.setAttribute("download", newFilename || true); 
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // --- Animación de añadir al carrito ---
+    function addToCartAnimation(clickElement) {
+        const cartButton = document.querySelector('.fab');
+        const rect1 = clickElement.getBoundingClientRect();
+        const rect2 = cartButton.getBoundingClientRect();
+        
+        const animationElement = document.createElement('div');
+        animationElement.className = 'add-to-cart-animation';
+        animationElement.innerHTML = '<i class="bi bi-check"></i>';
+        animationElement.style.left = rect1.left + rect1.width / 2 + 'px';
+        animationElement.style.top = rect1.top + rect1.height / 2 + 'px';
+        animationElement.style.setProperty('--x', (rect2.left - rect1.left) + 'px');
+        animationElement.style.setProperty('--y', (rect2.top - rect1.top) + 'px');
+        
+        document.body.appendChild(animationElement);
+        
+        setTimeout(() => {
+            animationElement.remove();
+        }, 800);
+    }
+
+    // --- Funciones Principales ---
+    const renderTemplates = (itemList) => {
+        container.innerHTML = '';
+        noResults.style.display = itemList.length === 0 ? 'block' : 'none';
+        
+        itemList.forEach(item => {
+            const tagsHtml = (item.tags || []).map(tag => `<span class="badge bg-secondary me-1">${tag}</span>`).join('');
+            const isBundle = item.isBundle || false;
+            const isManager = item.isManager || false; 
+            
+            let btnAdd = '';
+            if (isManager) {
+                btnAdd = `<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="${item.modalTarget}"><i class="bi bi-gear-fill"></i> Abrir Gestor</button>`;
+            } else if (isBundle) {
+                btnAdd = `<button class="btn btn-info btn-sm btn-add" data-id="${item.id}" data-is-bundle="true" data-component-ids="${(item.componentIds || []).join(',')}"><i class="bi bi-collection-fill"></i> Añadir Paquete</button>`;
+            } else {
+                btnAdd = `<button class="btn btn-outline-success btn-sm btn-add btn-add-compact" data-id="${item.id}" data-is-bundle="false"><i class="bi bi-plus-circle"></i> Añadir al Atestado</button>`;
+            }
+            
+            let footerBtns = '';
+            if (!isBundle && !isManager) {
+                
+                // --- Botón de Vista Previa (Modificado para PDF) ---
+                const btnPreview = (item.previewPdf) ?
+                    `<button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#previewModal" data-id="${item.id}">
+                        <i class="bi bi-eye"></i>
+                    </button>` : '';
+
+                const btnData = (item.formFields && item.formFields.length > 0) ?
+                    `<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#dataEntryModal" data-id="${item.id}">
+                        <i class="bi bi-input-cursor-text"></i>
+                    </button>` : '';
+                
+                const btnDownload = `<a href="${item.path}" download class="btn btn-primary btn-sm"><i class="bi bi-download"></i></a>`;
+                
+                // Botones agrupados
+                footerBtns = `
+                    <div class="btn-toolbar justify-content-end btn-toolbar-compact">
+                        <div class="btn-group me-2" role="group">
+                            ${btnPreview}
+                            ${btnData}
+                        </div>
+                        <div class="btn-group" role="group">
+                            ${btnDownload}
+                        </div>
+                    </div>`;
+            }
+
+            const card = `
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+                    <div class="card" data-category="${item.category}" data-id="${item.id}"> 
+                        <div class="expand-indicator">
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="card-body">
+                            <!-- Información básica siempre visible -->
+                            <div class="basic-info">
+                                <h5 class="card-title">${item.title}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${item.category}</h6>
+                            </div>
+                            
+                            <!-- Información expandible -->
+                            <div class="expandable-info">
+                                <p class="card-text">${item.description}</p>
+                                <div class="tags-container">${tagsHtml}</div>
+                            </div>
+                            
+                            <!-- Botones de acción -->
+                            <div class="actions-section">
+                                <div>${btnAdd}</div>
+                                ${footerBtns}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    };
+
+    // Función para manejar la expansión/contracción de cards
+    const setupCardExpansion = () => {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // No expandir si se hace clic en botones
+                if (e.target.closest('button, a')) {
+                    return;
+                }
+                
+                const isExpanded = card.classList.contains('expanded');
+                
+                // Cerrar todas las otras cards
+                document.querySelectorAll('.card.expanded').forEach(otherCard => {
+                    if (otherCard !== card) {
+                        otherCard.classList.remove('expanded');
+                    }
+                });
+                
+                // Toggle la card actual
+                card.classList.toggle('expanded', !isExpanded);
+            });
+        });
+    };
+
+    // Sistema de filtros con dropdown elegante
+    const renderCategoryFilters = () => {
+        const categoryCounts = allItems.reduce((acc, item) => {
+            acc[item.category] = (acc[item.category] || 0) + 1;
+            return acc;
+        }, {});
+        
+        const totalItems = allItems.length;
+        const categories = ['Todas', ...new Set(allItems.map(t => t.category))];
+        
+        let html = `
+            <div class="category-dropdown">
+                <button class="btn category-dropdown-btn active" id="categoryDropdownBtn">
+                    <i class="bi bi-funnel"></i>
+                    <span id="selectedCategory">Todas</span>
+                    <span class="category-count ms-2">${totalItems}</span>
+                    <i class="bi bi-chevron-down float-end"></i>
+                </button>
+                <div class="category-dropdown-menu" id="categoryDropdownMenu" style="display: none;">
+        `;
+        
+        categories.forEach(cat => {
+            const count = cat === 'Todas' ? totalItems : (categoryCounts[cat] || 0);
+            html += `
+                <div class="category-item" data-category="${cat}" data-count="${count}">
+                    <span class="category-name">${cat}</span>
+                    <span class="category-count">${count}</span>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+        categoryFiltersContainer.innerHTML = html;
+        
+        // Funcionalidad del dropdown
+        const dropdownBtn = document.getElementById('categoryDropdownBtn');
+        const dropdownMenu = document.getElementById('categoryDropdownMenu');
+        const selectedCategorySpan = document.getElementById('selectedCategory');
+        
+        // Toggle dropdown
+        dropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = dropdownMenu.style.display !== 'none';
+            dropdownMenu.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        // Seleccionar categoría
+        dropdownMenu.addEventListener('click', (e) => {
+            const item = e.target.closest('.category-item');
+            if (!item) return;
+            
+            const category = item.dataset.category;
+            const count = item.dataset.count;
+            
+            // Actualizar botón
+            selectedCategorySpan.textContent = category;
+            dropdownBtn.querySelector('.category-count').textContent = count;
+            
+            // Cerrar dropdown
+            dropdownMenu.style.display = 'none';
+            
+            // Filtrar y renderizar
+            filterAndRender();
+        });
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.category-dropdown')) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+        
+        // Aplicar colores de categorías
+        setTimeout(() => {
+            dropdownMenu.querySelectorAll('.category-item').forEach(item => {
+                const category = item.dataset.category;
+                if (category !== 'Todas') {
+                    item.setAttribute('data-category', category);
+                }
+            });
+        }, 50);
+    };
+
+    const filterAndRender = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategorySpan = document.getElementById('selectedCategory');
+        const activeCategory = selectedCategorySpan ? selectedCategorySpan.textContent : 'Todas';
+        const filtered = allItems.filter(item => {
+            const matchesCategory = activeCategory === 'Todas' || item.category === activeCategory;
+            const matchesSearch = !searchTerm ||
+                item.title.toLowerCase().includes(searchTerm) ||
+                item.description.toLowerCase().includes(searchTerm) ||
+                (item.tags || []).some(tag => tag.toLowerCase().includes(searchTerm));
+            return matchesCategory && matchesSearch;
+        });
+        renderTemplates(filtered);
+        setupCardExpansion();
+    };
+
+    // --- Lógica Cesta "Mi Atestado" (Mejorada) ---
+    
+    let sortableInstance = null;
+
+    new Sortable(compositionListEl, {
+        animation: 150,
+        handle: '.cart-handle',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        onEnd: (evt) => {
+            const item = compositionList.splice(evt.oldIndex, 1)[0];
+            compositionList.splice(evt.newIndex, 0, item);
+        }
+    });
+
+    const updateCompositionView = () => {
+        compositionListEl.innerHTML = '';
+        let totalItems = 0;
+        
+        if (compositionList.length === 0) {
+            emptyListMessage.style.display = 'block';
+            generateBtn.disabled = true;
+        } else {
+            emptyListMessage.style.display = 'none';
+            generateBtn.disabled = false;
+            
+            compositionList.forEach(item => {
+                totalItems += item.quantity;
+                const li = document.createElement('li');
+                li.className = 'list-group-item cart-item';
+                li.dataset.id = item.template.id;
+                li.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="cart-item-info">
+                            <span class="cart-handle"><i class="bi bi-grip-vertical"></i></span>
+                            <span class="cart-item-title">${item.template.title}</span>
+                        </div>
+                        <div class="cart-quantity-controls">
+                            <button class="cart-quantity-btn btn-dec" data-id="${item.template.id}">-</button>
+                            <span class="cart-quantity-display">${item.quantity}</span>
+                            <button class="cart-quantity-btn btn-inc" data-id="${item.template.id}">+</button>
+                        </div>
+                        <button class="cart-remove-btn btn-remove" data-id="${item.template.id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                `;
+                compositionListEl.appendChild(li);
+            });
+        }
+        composerCount.textContent = totalItems;
+        
+        // Animación del contador
+        composerCount.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            composerCount.style.transform = 'scale(1)';
+        }, 200);
+    };
+
+    const addToComposition = (templateId) => {
+        const template = templates.find(t => t.id === templateId);
+        if (!template) return; 
+
+        const existingItem = compositionList.find(item => item.template.id === templateId);
+        
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            compositionList.push({ template: template, quantity: 1 });
+        }
+        updateCompositionView();
+    };
+    
+    container.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-add');
+        if (!btn) return;
+        e.stopPropagation(); // Evitar que se active la expansión de la card
+        
+        // Animación de añadir al carrito
+        addToCartAnimation(btn);
+        
+        const isBundle = btn.dataset.isBundle === 'true';
+        if (isBundle) {
+            const componentIds = btn.dataset.componentIds.split(',').map(Number);
+            componentIds.forEach(id => { addToComposition(id); });
+        } else {
+            const id = parseInt(btn.dataset.id, 10);
+            addToComposition(id);
+        }
+    });
+    
+    // Manejar clics en botones dentro de las cards
+    container.addEventListener('click', e => {
+        const btn = e.target.closest('button, a');
+        if (btn && !btn.classList.contains('btn-add')) {
+            e.stopPropagation(); // Evitar expansión para botones de acción
+        }
+    });
+    
+    compositionListEl.addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = parseInt(btn.dataset.id, 10);
+        const item = compositionList.find(i => i.template.id === id);
+        if (btn.classList.contains('btn-remove')) {
+            compositionList = compositionList.filter(i => i.template.id !== id);
+        } else if (btn.classList.contains('btn-inc')) {
+            if (item) item.quantity++;
+        } else if (btn.classList.contains('btn-dec')) {
+            if (item) {
+                item.quantity--;
+                if (item.quantity <= 0) {
+                    compositionList = compositionList.filter(i => i.template.id !== id);
+                }
+            }
+        }
+        updateCompositionView();
+    });
+
+    clearBtn.addEventListener('click', () => {
+        if (compositionList.length > 0) {
+            if (confirm('¿Estás seguro de que quieres vaciar la lista?')) {
+                compositionList = [];
+                updateCompositionView();
+            }
+        }
+    });
+
+    generateBtn.addEventListener('click', () => {
+        downloadListEl.innerHTML = '';
+        const suffixes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const flatDownloadList = [];
+        compositionList.forEach(item => {
+            if (item.quantity === 1) {
+                flatDownloadList.push({ template: item.template, suffix: '' });
+            } else {
+                for (let i = 0; i < item.quantity; i++) {
+                    const suffix = suffixes[i] ? ` (${suffixes[i]})` : ` (Copia ${i + 1})`;
+                    flatDownloadList.push({ template: item.template, suffix: suffix });
+                }
+            }
+        });
+        flatDownloadList.forEach((downloadItem, index) => {
+            const originalFilename = downloadItem.template.path.split('/').pop();
+            const parts = originalFilename.split('.');
+            const ext = parts.pop();
+            const baseName = parts.join('.');
+            const newFilename = `${String(index).padStart(2, '0')}. ${baseName}${downloadItem.suffix}.${ext}`;
+            const li = document.createElement('li');
+            li.className = 'list-group-item download-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                <div>
+                    <span class="download-item-number">${String(index).padStart(2, '0')}.</span>
+                    <span>${baseName}${downloadItem.suffix}.${ext}</span>
+                </div>
+                <a href="${downloadItem.template.path}" download="${newFilename}" class="btn download-btn">
+                    <i class="bi bi-download me-1"></i> Descargar
+                </a>
+            `;
+            downloadListEl.appendChild(li);
+        });
+        compositionView.style.display = 'none';
+        generateBtn.style.display = 'none';
+        clearBtn.style.display = 'none';
+        downloadView.style.display = 'block';
+        startOverBtn.style.display = 'block';
+    });
+    
+    downloadAllBtn.addEventListener('click', (e) => {
+        const links = downloadListEl.querySelectorAll('a');
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<div class="loading-spinner"></div> Descargando...';
+        links.forEach((link, index) => {
+            setTimeout(() => { link.click(); }, index * 500);
+        });
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalHTML;
+        }, links.length * 500);
+    });
+
+    startOverBtn.addEventListener('click', () => {
+        compositionView.style.display = 'block';
+        generateBtn.style.display = 'block';
+        clearBtn.style.display = 'block';
+        downloadView.style.display = 'none';
+        startOverBtn.style.display = 'none';
+        downloadAllBtn.disabled = false;
+        downloadAllBtn.innerHTML = '<i class="bi bi-cloud-download-fill me-2"></i> Descargar Todo';
+    });
+    
+    // --- Lógica del Modal "Introducir Datos" (Mejorada) ---
+    
+    dataEntryModalEl.addEventListener('show.bs.modal', (event) => {
+        const button = event.relatedTarget;
+        const templateId = parseInt(button.dataset.id, 10);
+        const template = templates.find(t => t.id === templateId);
+        if (!template) return; 
+        
+        dataEntryModalTitle.textContent = `Datos para: ${template.title}`;
+        dataEntryForm.innerHTML = '';
+        
+        template.formFields.forEach(field => {
+            let formHtml = '';
+            const requiredAttr = field.required ? 'required' : '';
+            if (field.type === 'textarea') {
+                formHtml = `<div class="col-12"><label for="form_${field.id}" class="form-label">${field.label}</label><textarea class="form-control" id="form_${field.id}" data-csv-id="${field.id}" rows="3" ${requiredAttr}></textarea></div>`;
+            } else {
+                formHtml = `<div class="col-md-6"><label for="form_${field.id}" class="form-label">${field.label}</label><input type="${field.type}" class="form-control" id="form_${field.id}" data-csv-id="${field.id}" ${requiredAttr}></div>`;
+            }
+            dataEntryForm.innerHTML += formHtml;
+        });
+        
+        generateDataBtn.dataset.templateId = template.id;
+        generateDataBtn.dataset.templatePath = template.path;
+    });
+
+    generateDataBtn.addEventListener('click', () => {
+        if (!dataEntryForm.checkValidity()) {
+            dataEntryForm.reportValidity();
+            return;
+        }
+        
+        // Animación de procesamiento
+        const originalHTML = generateDataBtn.innerHTML;
+        generateDataBtn.innerHTML = '<div class="loading-spinner"></div> Procesando...';
+        generateDataBtn.disabled = true;
+        
+        setTimeout(() => {
+            const inputs = dataEntryForm.querySelectorAll('input[data-csv-id], textarea[data-csv-id]');
+            let csvHeader = [];
+            let csvRow = [];
+            
+            const mesesES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            
+            inputs.forEach(input => {
+                csvHeader.push(input.dataset.csvId);
+                
+                let valor = input.value;
+                
+                // Formatear fechas y horas
+                if (input.type === 'date' && valor) {
+                    const fecha = new Date(valor + "T00:00:00");
+                    const dia = fecha.getDate();
+                    const mes = mesesES[fecha.getMonth()];
+                    const anio = fecha.getFullYear();
+                    valor = `${dia} de ${mes} de ${anio}`;
+                    
+                } else if (input.type === 'time' && valor) {
+                    valor = `${valor} horas`;
+                }
+                
+                csvRow.push(`"${valor}"`);
+            });
+            
+            const csvContent = csvHeader.join(',') + '\n' + csvRow.join(',');
+            
+            const templatePath = generateDataBtn.dataset.templatePath;
+            const originalFilename = templatePath.split('/').pop();
+            const baseName = originalFilename.split('.').slice(0, -1).join('.');
+            
+            const csvFilename = `${baseName}.csv`;
+            
+            downloadCSV(csvContent, csvFilename);
+            
+            setTimeout(() => {
+                downloadFile(templatePath); 
+                generateDataBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> ¡Completado!';
+                setTimeout(() => {
+                    const modalInstance = bootstrap.Modal.getInstance(dataEntryModalEl);
+                    modalInstance.hide();
+                    dataEntryForm.reset();
+                    generateDataBtn.innerHTML = originalHTML;
+                    generateDataBtn.disabled = false;
+                }, 1500);
+            }, 500); 
+        }, 1000);
+    });
+
+    // --- (NUEVO) Lógica del Modal de Vista Previa (PDF) ---
+    previewModalEl.addEventListener('show.bs.modal', (event) => {
+        const button = event.relatedTarget; 
+        const templateId = parseInt(button.dataset.id, 10);
+        const template = allItems.find(t => t.id === templateId);
+        
+        // Limpiar el contenido anterior
+        previewModalBody.innerHTML = ""; 
+        
+        if (!template || !template.previewPdf) {
+            previewModalLabel.textContent = "Error";
+            previewModalBody.innerHTML = "<p class='p-4 text-center'>No hay vista previa disponible.</p>";
+            return;
+        }
+
+        previewModalLabel.textContent = `Vista Previa: ${template.title}`;
+        
+        // Inyectar el visor de PDF
+        const embedHtml = `<embed src="${template.previewPdf}" type="application/pdf" width="100%" />`;
+        previewModalBody.innerHTML = embedHtml;
+    });
+
+    // --- Carga Inicial de la Página ---
+    searchInput.addEventListener('input', filterAndRender);
+    renderCategoryFilters();
+    renderTemplates(allItems);
+    setupCardExpansion();
+    updateCompositionView();
+});
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"99bcf232fecaec8e","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"e72945439c264b3b85d2e3b689102d27"}' crossorigin="anonymous"></script>
+</body>
+</html>
