@@ -1532,6 +1532,20 @@ const templates = [
     // ### id: 100-199 - ACTAS
     // ######################################################################
     {
+        id: 1, 
+        title: "CONDUCTOR A",
+        description: "Formulario para cargar datos del implicado.",
+        category: "Herramientas", 
+        tags: ["informe", "jefatura", "novedades"],
+        formFields: [
+            { id: "nombre_condA", label: "Nombre completo", type: "text", required: true },
+            { id: "DNI_condA", label: "DNI", type: "text", required: true },
+            { id: "fecha_nac_condA", label: "Fecha de nacimiento", type: "date", required: true },
+            { id: "domicilio_condA", label: "Domicilio", type: "text", required: true },
+            { id: "telefono_condA", label: "Teléfono", type: "number", required: true }
+        ],
+    },
+    {
         id: 100, 
         title: "Informe Interno",
         description: "Plantilla de informe tipo para comunicar un asunto al Subinspector-Jefe.",
@@ -1567,13 +1581,23 @@ const templates = [
         path: ".plantillas/actas/P - Acta intervención permiso de conducir.docx",
          formFields: [
             { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
+            { id: "fecha_acta", label: "Fecha del acta", type: "date", required: true },
+            { id: "hora_acta", label: "Hora del acta", type: "time", required: true },
+            { id: "agente_1", label: "Agente 1", type: "text", required: true },
+            { id: "agente_2", label: "Agente 2", type: "text", required: true },
             { id: "nombre", label: "Nombre completo", type: "text", required: true },
-            { id: "DNI", label: "DNI/NIE/Otro", type: "date", required: true },
+            { id: "DNI", label: "DNI/NIE/Otro", type: "text", required: true },
             { id: "fecha_nac", label: "Fecha de nacimiento", type: "text", required: true },
-            { id: "lugar_nac", label: "Lugar de nacimiento", type: "text", required: true },
+            { id: "lugar_nac", label: "Localidad de nacimiento(provincia)", type: "text", required: true },
             { id: "domicilio", label: "Domicilio", type: "text", required: true },
             { id: "localidad", label: "Localidad(Provincia)", type: "text", required: true },
-            { id: "telefono", label: "Teléfono", type: "text", required: true },
+            { id: "telefono", label: "Teléfono", type: "number", required: true },
+            { id: "clase_veh", label: "Clase de vehículo", type: "text", required: true },
+            { id: "marca_veh", label: "Marca del vehículo", type: "text", required: true },
+            { id: "modelo_veh", label: "Modelo del vehículo", type: "text", required: true },
+            { id: "color_veh", label: "Color del vehículo", type: "text", required: true },
+            { id: "matricula_veh", label: "Matrícula del vehículo", type: "text", required: true },
+            
         ],
         previewPdf: ".plantillas/actas/P - Acta intervención permiso de conducir.pdf"
     },
@@ -2145,6 +2169,13 @@ document.addEventListener('DOMContentLoaded', () => {
         generateDataBtn.disabled = true;
         
         setTimeout(() => {
+            
+            // --- ¡AQUÍ EMPIEZA LA MODIFICACIÓN! ---
+            
+            // 1. Define cuántas veces quieres repetir CADA campo
+            // ¡Este es el número que puedes modificar fácilmente!
+            const REPEAT_COUNT = 10; 
+            
             const inputs = dataEntryForm.querySelectorAll('input[data-csv-id], textarea[data-csv-id]');
             let csvHeader = [];
             let csvRow = [];
@@ -2152,24 +2183,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const mesesES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
             
             inputs.forEach(input => {
-                csvHeader.push(input.dataset.csvId);
+                // 1. Obtener el ID base (ej: "nombre")
+                const baseId = input.dataset.csvId;
                 
+                // 2. Obtener y formatear el valor (esto es tu código original)
                 let valor = input.value;
-                
-                // Formatear fechas y horas
                 if (input.type === 'date' && valor) {
                     const fecha = new Date(valor + "T00:00:00");
                     const dia = fecha.getDate();
                     const mes = mesesES[fecha.getMonth()];
                     const anio = fecha.getFullYear();
                     valor = `${dia} de ${mes} de ${anio}`;
-                    
                 } else if (input.type === 'time' && valor) {
                     valor = `${valor} horas`;
                 }
                 
-                csvRow.push(`"${valor}"`);
+                // 3. ¡NUEVA LÓGICA DE BUCLE!
+                // Repetir el valor REPEAT_COUNT veces con cabeceras numeradas
+                for (let i = 1; i <= REPEAT_COUNT; i++) {
+                    // Crear cabecera numerada (ej: "nombre1", "nombre2", ...)
+                    csvHeader.push(`${baseId}${i}`);
+                    
+                    // Añadir el MISMO valor formateado a la fila
+                    csvRow.push(`"${valor}"`);
+                }
             });
+            
+            // --- ¡AQUÍ TERMINA LA MODIFICACIÓN! ---
             
             const csvContent = csvHeader.join(',') + '\n' + csvRow.join(',');
             

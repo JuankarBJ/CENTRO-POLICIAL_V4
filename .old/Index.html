@@ -1532,6 +1532,20 @@ const templates = [
     // ### id: 100-199 - ACTAS
     // ######################################################################
     {
+        id: 1, 
+        title: "CONDUCTOR A",
+        description: "Formulario para cargar datos del implicado.",
+        category: "Herramientas", 
+        tags: ["informe", "jefatura", "novedades"],
+        formFields: [
+            { id: "nombre_condA", label: "Nombre completo", type: "text", required: true },
+            { id: "DNI_condA", label: "DNI", type: "text", required: true },
+            { id: "fecha_nac_condA", label: "Fecha de nacimiento", type: "date", required: true },
+            { id: "domicilio_condA", label: "Domicilio", type: "text", required: true },
+            { id: "telefono_condA", label: "Teléfono", type: "number", required: true }
+        ],
+    },
+    {
         id: 100, 
         title: "Informe Interno",
         description: "Plantilla de informe tipo para comunicar un asunto al Subinspector-Jefe.",
@@ -1567,13 +1581,13 @@ const templates = [
         path: ".plantillas/actas/P - Acta intervención permiso de conducir.docx",
          formFields: [
             { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
-            { id: "nombre", label: "Nombre completo", type: "text", required: true },
-            { id: "DNI", label: "DNI/NIE/Otro", type: "date", required: true },
-            { id: "fecha_nac", label: "Fecha de nacimiento", type: "text", required: true },
-            { id: "lugar_nac", label: "Lugar de nacimiento", type: "text", required: true },
-            { id: "domicilio", label: "Domicilio", type: "text", required: true },
-            { id: "localidad", label: "Localidad(Provincia)", type: "text", required: true },
-            { id: "telefono", label: "Teléfono", type: "text", required: true },
+            //{ id: "nombre", label: "Nombre completo", type: "text", required: true },
+            //{ id: "DNI", label: "DNI/NIE/Otro", type: "date", required: true },
+            //{ id: "fecha_nac", label: "Fecha de nacimiento", type: "text", required: true },
+            //{ id: "lugar_nac", label: "Lugar de nacimiento", type: "text", required: true },
+            //{ id: "domicilio", label: "Domicilio", type: "text", required: true },
+            //{ id: "localidad", label: "Localidad(Provincia)", type: "text", required: true },
+            //{ id: "telefono", label: "Teléfono", type: "text", required: true },
         ],
         previewPdf: ".plantillas/actas/P - Acta intervención permiso de conducir.pdf"
     },
@@ -2181,17 +2195,25 @@ document.addEventListener('DOMContentLoaded', () => {
             
             downloadCSV(csvContent, csvFilename);
             
-            setTimeout(() => {
+           setTimeout(() => {
+            
+            // --- ¡AQUÍ ESTÁ LA MODIFICACIÓN! ---
+            // Comprueba si 'templatePath' tiene un valor.
+            // Si no existe (como en "CONDUCTOR A"), no intentará descargar el DOCX.
+            if (templatePath) {
                 downloadFile(templatePath); 
-                generateDataBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> ¡Completado!';
-                setTimeout(() => {
-                    const modalInstance = bootstrap.Modal.getInstance(dataEntryModalEl);
-                    modalInstance.hide();
-                    dataEntryForm.reset();
-                    generateDataBtn.innerHTML = originalHTML;
-                    generateDataBtn.disabled = false;
-                }, 1500);
-            }, 500); 
+            }
+            // --- FIN DE LA MODIFICACIÓN ---
+            
+            generateDataBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> ¡Completado!';
+            setTimeout(() => {
+                const modalInstance = bootstrap.Modal.getInstance(dataEntryModalEl);
+                modalInstance.hide();
+                dataEntryForm.reset();
+                generateDataBtn.innerHTML = originalHTML;
+                generateDataBtn.disabled = false;
+            }, 1500);
+        }, 500); 
         }, 1000);
     });
 
