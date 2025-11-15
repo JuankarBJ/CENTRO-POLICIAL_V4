@@ -1766,8 +1766,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i class="bi bi-input-cursor-text"></i>
                     </button>` : '';
                 
-                const btnDownload = `<a href="${item.path}" download class="btn btn-primary btn-sm"><i class="bi bi-download"></i></a>`;
-                
+                // Línea corregida
+                const btnDownload = (item.path) ?
+                    `<a href="${item.path}" download class="btn btn-primary btn-sm"><i class="bi bi-download"></i></a>` : '';
                 // Botones agrupados
                 footerBtns = `
                     <div class="btn-toolbar justify-content-end btn-toolbar-compact">
@@ -2223,7 +2224,14 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadCSV(csvContent, csvFilename);
             
             setTimeout(() => {
-                downloadFile(templatePath); 
+                
+                // --- INICIO DE LA SOLUCIÓN ---
+                // Solo intentar descargar el archivo de plantilla si el 'path' existe
+                if (templatePath && templatePath !== "") {
+                    downloadFile(templatePath); 
+                }
+                // --- FIN DE LA SOLUCIÓN ---
+
                 generateDataBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> ¡Completado!';
                 setTimeout(() => {
                     const modalInstance = bootstrap.Modal.getInstance(dataEntryModalEl);
