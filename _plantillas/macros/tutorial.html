@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial - Asistente de Atestados</title>
+    
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        /* Cabecera Profesional (Copiada de tu estilo) */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .header h1 { 
+            font-weight: 700; 
+            font-size: 2.4rem; 
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+        .header .lead { 
+            font-size: 1.2rem; 
+            color: rgba(255, 255, 255, 0.9); 
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        /* Contenedor principal del tutorial */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px;
+        }
+        
+        /* Estilo de Acordeón (inspirado en tus .card) */
+        details {
+            background: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            overflow: hidden; /* Para que el radius funcione con el summary */
+        }
+        details[open] {
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.1);
+            border-color: #a5b4fc;
+        }
+        
+        summary {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e3a8a; /* Azul oscuro de tu header */
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            outline: none;
+            list-style: none; /* Oculta la flecha por defecto */
+            position: relative;
+        }
+        
+        summary::-webkit-details-marker { display: none; } /* Oculta flecha en Chrome/Safari */
+        
+        /* Indicador +/- (más profesional) */
+        summary:before {
+            content: '+';
+            font-size: 1.7rem;
+            font-weight: 300;
+            color: #3b82f6; /* Azul medio de tu header */
+            margin-right: 1rem;
+            transition: transform 0.2s ease-in-out;
+            display: inline-block;
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+        }
+        
+        details[open] summary:before {
+            content: '−'; /* Símbolo de resta (más limpio que el guión) */
+            transform: translateY(-50%);
+        }
+
+        /* Contenido de la explicación */
+        .explanation {
+            padding: 0 2.5rem 1.5rem 1.5rem;
+            color: #374151; /* Gris oscuro para el texto */
+            line-height: 1.7;
+            border-top: 1px solid #e2e8f0;
+        }
+        .explanation p {
+            margin: 1rem 0 0 0;
+        }
+        .explanation p:first-child {
+            margin-top: 1.5rem; /* Espacio después del borde */
+        }
+        .explanation strong {
+            color: #1e40af; /* Azul oscuro */
+        }
+        .explanation code {
+            background-color: #eef2ff; /* Fondo azul muy claro */
+            border: 1px solid #dbeafe; /* Borde azul claro */
+            color: #1d4ed8; /* Azul */
+            padding: 3px 6px;
+            border-radius: 6px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        
+        /* Alerta (Inspirada en tus estilos de categoría) */
+        .warning {
+            background-color: #fffbeb; /* Amarillo claro */
+            border: 1px solid #fde68a; /* Borde amarillo */
+            border-left: 4px solid #f59e0b; /* Acento naranja/ámbar */
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        .warning strong {
+            color: #b45309; /* Naranja oscuro */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Guía de Funciones</h1>
+        <p class="lead">Asistente de Atestados y Gestión de Plantillas</p>
+    </div>
+
+    <div class="container">
+
+        <details>
+            <summary>Abrir centro de gestión y descarga</summary>
+            <div class="explanation">
+                <p>
+                    Inicia el portal web de plantillas. Esta es la herramienta principal para encontrar y preparar tus documentos.
+                </p>
+                <p><strong>Cuándo usarlo:</strong> Úsalo para <strong>buscar</strong> en la base de datos de plantillas, <strong>descargarlas</strong> a tu "carrito" de trabajo, y **prepararlas** para su rellenado con los datos que generes.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Realizar autocompletado seleccionando manualmente datos y plantillas</summary>
+            <div class="explanation">
+                <p>
+                    Esta es la función de rellenado más <strong>flexible</strong>. Te permite rellenar cualquier plantilla de Word con datos de cualquier archivo CSV.
+                </p>
+                <p><strong>Cuándo usarlo:</strong> Ideal cuando los archivos <code>.csv</code> y <code>.docx</code> <strong>NO</strong> se llaman igual, o cuando quieres usar un mismo CSV (ej. <code>implicado.csv</code>) para rellenar varias plantillas (ej. <code>acta.docx</code>, <code>derechos.docx</code>, etc.).</p>
+                <p><strong>Proceso:</strong>
+                    <ol>
+                        <li>Seleccionas los archivos CSV que contienen tus datos (puedes elegir varios).</li>
+                        <li>Seleccionas las plantillas DOCX que quieres rellenar (puedes elegir varias).</li>
+                        <li>Seleccionas la carpeta donde se guardarán los documentos rellenados.</li>
+                    </ol>
+                </p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Generar csv con datos fusionados de otros csv</summary>
+            <div class="explanation">
+                <p>
+                    Esta función combina varios archivos CSV en <strong>un único archivo nuevo</strong>.
+                </p>
+                <p><strong>Cuándo usarlo:</strong> Cuando tienes datos repartidos en varios CSV (ej. <code>implicadoA.csv</code>, <code>implicadoB.csv</code>, <code>vehiculo.csv</code>) y quieres crear un solo archivo maestro (<code>Salida_Combinada.csv</code>) que contenga todos los campos y valores juntos.</p>
+                <p><strong>Proceso:</strong>
+                    <ol>
+                        <li>Seleccionas todos los CSV que quieres combinar.</li>
+                        <li>La macro los lee todos y crea un nuevo archivo <code>Salida_Combinada.csv</code> en la carpeta de este Excel.</li>
+                    </ol>
+                </p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Añadir datos de csv fuente en otros csv</summary>
+            <div class="explanation">
+                <p>
+                    Esta función "inyecta" los datos de un CSV "Fuente" dentro de otros CSV "Destino".
+                </p>
+                <p><strong>Cuándo usarlo:</strong> Es el caso de uso más común. Tienes un CSV con los datos del implicado (<code>implicado.csv</code>) y quieres que esos datos se añadan a los archivos de datos de cada acta (<code>alcoholemia.csv</code>, <code>derechos.csv</code>, etc.).</p>
+                <div class="warning">
+                    <strong>¡Importante!</strong> Esta acción <strong>SOBREESCRIBE</strong> los archivos CSV "Destino" (<code>alcoholemia.csv</code>, <code>derechos.csv</code>) con la nueva información combinada.
+                </div>
+                <p><strong>Proceso:</strong>
+                    <ol>
+                        <li>Seleccionas el CSV "Fuente" (ej. <code>implicado.csv</code>).</li>
+                        <li>Seleccionas los CSV "Destino" (ej. <code>alcoholemia.csv</code>, <code>derechos.csv</code>).</li>
+                        <li>Los archivos destino son actualizados al instante.</li>
+                    </ol>
+                </p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Autocompletar automáticamente en carpeta</summary>
+            <div class="explanation">
+                <p>
+                    Esta es la función de rellenado automático principal. Escanea una carpeta y rellena plantillas basándose en la <strong>coincidencia de nombres</strong>.
+                </p>
+                <p><strong>Cuándo usarlo:</strong> Cuando tienes una carpeta de trabajo bien organizada donde cada plantilla <code>.docx</code> tiene su archivo <code>.csv</code> con el <strong>mismo nombre exacto</strong>.</p>
+                <p>
+                    Ejemplo:
+                    <ul>
+                        <li><code>Acta de Derechos.docx</code> se rellenará con <code>Acta de Derechos.csv</code></li>
+                        <li><code>Inspección Vehículo.docx</code> se rellenará con <code>Inspección Vehículo.csv</code></li>
+                    </ul>
+                </p>
+                <p><strong>Proceso:</strong>
+                    <ol>
+                        <li>Seleccionas la carpeta principal del atestado.</li>
+                        <li>La macro busca todos los pares <code>.docx</code>/<code>.csv</code> que coincidan.</li>
+                        <li>Guarda todos los documentos rellenados en una nueva subcarpeta llamada <code>documentos generados</code>.</li>
+                    </ol>
+                </p>
+            </div>
+        </details>
+
+    </div>
+
+</body>
+</html>
