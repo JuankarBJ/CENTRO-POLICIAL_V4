@@ -1525,26 +1525,41 @@ const templates = [
 //       description: "Descarga este archivo. Su macro rellenará las plantillas descargadas con los datos introducidos.",
 //       category: "Herramientas",
 //       tags: ["macro", "excel", "importar"],
-//       path: ".plantillas/macros/MaestroImportador.xlsm"
+//       path: "_plantillas/macros/MaestroImportador.xlsm"
 //   },
 
     // ######################################################################
     // ### id: 100-199 - ACTAS
     // ######################################################################
     {
-        id: 1, 
-        title: "CONDUCTOR A",
-        description: "Formulario para cargar datos del implicado.",
+        id: 2, 
+        title: "Datos de Implicado (Genérico)",
+        description: "Formulario para cargar datos de cualquier implicado (conductor, testigo, víctima...).",
         category: "Herramientas", 
-        tags: ["informe", "jefatura", "novedades"],
+        tags: ["herramientas", "implicado", "genérico", "csv"],
         path: "",
+        // path: "",  <-- No tiene path, solo genera CSV
         formFields: [
-            { id: "nombre_condA", label: "Nombre completo", type: "text", required: true },
-            { id: "DNI_condA", label: "DNI", type: "text", required: true },
-            { id: "fecha_nac_condA", label: "Fecha de nacimiento", type: "date", required: true },
-            { id: "domicilio_condA", label: "Domicilio", type: "text", required: true },
-            { id: "telefono_condA", label: "Teléfono", type: "number", required: true }
-        ],
+            { id: "tipo_imp", label: "Tipo de Implicado (CONDUCTOR A, TESTIGO, etc.)", type: "text", required: false },
+            { id: "vehiculo_imp", label: "Vehículo del Implicado (VEHÍCULO A, VEHÍCULO B,BICICLETA, etc.)", type: "text", required: false },
+            { id: "nombre_imp", label: "Nombre completo", type: "text", required: false },
+            { id: "tipo_doc_imp", label: "Tipo de Documento (DNI, NIE, Pasaporte)", type: "text", required: false },
+            { id: "num_doc_imp", label: "Número de Documento", type: "text", required: false },
+            { id: "fecha_nac_imp", label: "Fecha de nacimiento", type: "date", required: false },
+            { id: "lugar_nac_imp", label: "Lugar de nacimiento (Localidad y provincia)", type: "text", required: false },
+            { id: "domicilio_imp", label: "Domicilio (Calle, Número, Piso...)", type: "text", required: false },
+            { id: "loc_prov_imp", label: "Localidad y Provincia (Domicilio)", type: "text", required: false },
+            { id: "padre_imp", label: "Nombre del Padre", type: "text", required: false },
+            { id: "madre_imp", label: "Nombre de la Madre", type: "text", required: false },
+            { id: "telefono_imp", label: "Teléfono", type: "text", required: false },
+            { id: "email_imp", label: "Correo Electrónico", type: "email", required: false },
+            { id: "permiso_imp", label: "Clase de permiso de conducir:", type: "text", required: false },
+            { id: "validez_per_imp", label: "Validez de permiso o licencia:", type: "date", required: false }
+               
+
+        
+        
+        ]
     },
     {
         id: 100, 
@@ -1552,7 +1567,7 @@ const templates = [
         description: "Plantilla de informe tipo para comunicar un asunto al Subinspector-Jefe.",
         category: "Actas", 
         tags: ["informe", "jefatura", "novedades"],
-        path: ".plantillas/actas/P - Acta Informe.docx",
+        path: "_plantillas/actas/P - Acta Informe.docx",
         formFields: [
             { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
             { id: "asunto", label: "Asunto", type: "text", required: true },
@@ -1560,7 +1575,7 @@ const templates = [
             { id: "num_agente", label: "Nº de Agente (Fdo.)", type: "text", required: true },
             { id: "texto_informe", label: "Cuerpo del Informe", type: "textarea", required: true }
         ],
-        previewPdf: ".plantillas/actas/P - Acta Informe.pdf"
+        previewPdf: "_plantillas/actas/P - Acta Informe.pdf"
     },
    
     {
@@ -1569,9 +1584,9 @@ const templates = [
         description: "Acta para cumplimentar en casos de daño a objetos de propiedad municipal.",
         category: "Actas",
         tags: ["daños", "propiedad municipal","actas"],
-        path: ".plantillas/actas/P - Acta daños a objetos de propiedad municipal.docx",
+        path: "_plantillas/actas/P - Acta daños a objetos de propiedad municipal.docx",
        
-        previewPdf: ".plantillas/actas/P - Acta daños a objetos de propiedad municipal.pdf"
+        previewPdf: "_plantillas/actas/P - Acta daños a objetos de propiedad municipal.pdf"
     },
     {
         id: 102,
@@ -1579,7 +1594,7 @@ const templates = [
         description: "Acta para la retirada de un permiso de conducir caducado.",
         category: "Actas",
         tags: ["permiso de conducir", "caducado","retirada","intervención"],
-        path: ".plantillas/actas/P - Acta intervención permiso de conducir.docx",
+        path: "_plantillas/actas/P - Acta intervención permiso de conducir.docx",
          formFields: [
             { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
             { id: "fecha_acta", label: "Fecha del acta", type: "date", required: true },
@@ -1600,7 +1615,21 @@ const templates = [
             { id: "matricula_veh", label: "Matrícula del vehículo", type: "text", required: true },
             
         ],
-        previewPdf: ".plantillas/actas/P - Acta intervención permiso de conducir.pdf"
+        previewPdf: "_plantillas/actas/P - Acta intervención permiso de conducir.pdf"
+    },
+    {
+        id: 200, 
+        title: "Diligencia de Identificación Conductor",
+        description: "Diligencia de identificación de conductor y vehículo en atestado.",
+        category: "Diligencias", 
+        tags: ["identificación", "atestado", "diligencia"],
+        path: "_plantillas/diligencias/P - Identificacion.docx",
+        formFields: [
+            { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
+            { id: "num_1agente", label: "Nº de Agente 1(Fdo.)", type: "text", required: true },
+            { id: "num_2agente", label: "Nº de Agente 2(Fdo.)", type: "text", required: true },
+                    ],
+        previewPdf: "_plantillas/diligencias/P - Identificacion.pdf"
     },
     {
         id: 500,
@@ -1608,9 +1637,9 @@ const templates = [
         description: "Atestado completo para delito de conducción sin haber obtenido nunca el permiso de conducir, tenerlo retirado por pérdida de puntos o resolución judicial.",
         category: "Atestados",
         tags: ["atestado completo", "permiso","delito"],
-        path: ".plantillas/atestados/P - ATESTADO SIN PERMISO.docx",
+        path: "_plantillas/atestados/P - ATESTADO SIN PERMISO.docx",
         // --- ¡PROPIEDAD MODIFICADA! ---
-        previewPdf: ".plantillas/atestados/P - ATESTADO SIN PERMISO.pdf"
+        previewPdf: "_plantillas/atestados/P - ATESTADO SIN PERMISO.pdf"
     },
     {
         id: 501,
@@ -1618,9 +1647,9 @@ const templates = [
         description: "Atestado completo para delito de conducir bajo la influencia de bebidas alcohólicas o con tasa superior a 0,6mg/L en aire expirado, así como en caso de negativa a someterse a las pruebas.",
         category: "Atestados",
         tags: ["atestado completo", "alcohol","negativa"],
-        path: ".plantillas/atestados/P - CIBA ALCOHOLEMIA TODOS LOS CASOS.docx",
+        path: "_plantillas/atestados/P - CIBA ALCOHOLEMIA TODOS LOS CASOS.docx",
         // --- ¡PROPIEDAD MODIFICADA! ---
-        previewPdf: ".plantillas/atestados/P - CIBA ALCOHOLEMIA TODOS LOS CASOS.pdf"
+        previewPdf: "_plantillas/atestados/P - CIBA ALCOHOLEMIA TODOS LOS CASOS.pdf"
     },
     {
         id: 600,
@@ -1628,9 +1657,9 @@ const templates = [
         description: "Plantilla estándar para la petición del traslado del arma.",
         category: "Utilidad",
         tags: ["arma", "traslado","solicitud"],
-        path: ".plantillas/utilidad/P - Traslado Arma.docx",
+        path: "_plantillas/utilidad/P - Traslado Arma.docx",
         // --- ¡PROPIEDAD MODIFICADA! ---
-        previewPdf: ".plantillas/utilidad/P - Traslado Arma.pdf"
+        previewPdf: "_plantillas/utilidad/P - Traslado Arma.pdf"
     }, 
     {
         id: 601,
@@ -1638,9 +1667,9 @@ const templates = [
         description: "Plantilla estándar para el seguimiento de transeúntes.",
         category: "Utilidad",
         tags: ["albergue", "transeuntes"],
-        path: ".plantillas/utilidad/P - Hoja Transeúntes.docx",
+        path: "_plantillas/utilidad/P - Hoja Transeúntes.docx",
         // --- ¡PROPIEDAD MODIFICADA! ---
-        previewPdf: ".plantillas/utilidad/P - Hoja Transeúntes.pdf"
+        previewPdf: "_plantillas/utilidad/P - Hoja Transeúntes.pdf"
     } 
     
     
