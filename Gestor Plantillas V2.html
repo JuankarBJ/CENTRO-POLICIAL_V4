@@ -1627,10 +1627,10 @@ const templates = [
     // ######################################################################
     {
         id: 2, 
-        title: "Datos de Implicado (Genérico)",
+        title: "Datos de Implicado",
         description: "Formulario para cargar datos de cualquier implicado (conductor, testigo, víctima...).",
         category: "Formulario", 
-        tags: ["herramientas", "implicado", "genérico", "csv"],
+        tags: ["herramientas", "implicado", "generico", "xml","datos"],
         path: "",
         // path: "",  <-- No tiene path, solo genera CSV
         formFields: [
@@ -1653,6 +1653,25 @@ const templates = [
 
         
         
+        ]
+    },
+	{
+        id: 3, 
+        title: "Datos de Atestado",
+        description: "Formulario para cargar datos generales del atestado (Nº Diligencias, Instructor, Secretario...).",
+        category: "Formulario", 
+        tags: ["herramientas", "atestado", "generico", "xml","datos"],
+        path: "",
+        // path: "",  <-- No tiene path, solo genera CSV
+        formFields: [
+            { id: "num_registro", label: "Numero de Diligencias PL", type: "text", required: false },
+            { id: "motivo_ates", label: "Motivo atestado (Siniestro víal, Delito contra la seguridad vial...)", type: "text", required: false },
+	    { id: "num_1agente", label: "Instructor", type: "text", required: false },
+            { id: "num_2agente", label: "Secretario", type: "text", required: false },
+            { id: "fecha_ates", label: "Fecha del Atestado", type: "date", required: false },
+            { id: "hora_ates", label: "Hora del Atestado", type: "time", required: false },
+            { id: "lugar_ates", label: "Lugar Atestado", type: "text", required: false },
+            
         ]
     },
     {
@@ -1717,13 +1736,30 @@ const templates = [
         description: "Diligencia de identificación de conductor y vehículo en atestado.",
         category: "Diligencias", 
         tags: ["identificación", "atestado", "diligencia"],
-        path: "_plantillas/diligencias/P - Identificacion.docx",
+        path: "_plantillas/diligencias/P-Identificacion.docx",
         formFields: [
             { id: "num_registro", label: "Nº de Registro PL", type: "text", required: true },
             { id: "num_1agente", label: "Nº de Agente 1(Fdo.)", type: "text", required: true },
             { id: "num_2agente", label: "Nº de Agente 2(Fdo.)", type: "text", required: true },
+
+
+
+
                     ],
         previewPdf: "_plantillas/diligencias/P - Identificacion.pdf"
+    },
+	{
+        id: 2001, 
+        title: "Diligencia de Derechos de Alcoholemia",
+        description: "Diligencia de información de derechos para la realización de la prueba de alcoholemia..",
+        category: "Diligencias", 
+        tags: ["derechos", "alcoholemia", "delito", "atestado", "diligencia"],
+        path: "_plantillas/diligencias/P-Derechos_Alcoholemia.docx",
+        formFields: [
+            { id: "fecha_derAlc", label: "Fecha de la prueba", type: "date", required: true },
+            { id: "hora_derAlc", label: "Hora de la prueba", type: "time", required: true },
+         ],
+        previewPdf: "_plantillas/diligencias/P-Derechos_Alcoholemia.pdf"
     },
     {
         id: 500,
